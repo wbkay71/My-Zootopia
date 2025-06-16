@@ -1,54 +1,62 @@
 import json
 
-# Step 1: Load the animal data from the JSON file
-with open("animals_data.json", "r", encoding="utf-8") as file:
-    animals = json.load(file)
 
-# Step 2: Create an empty string to collect HTML content
-output = ""
+def load_animals(file_path):
+    """Load the animal data from a JSON file."""
+    with open(file_path, "r", encoding="utf-8") as file:
+        return json.load(file)
 
-# Step 3: Loop through each animal in the data list
-for animal in animals:
-    # Get the name of the animal
+
+def serialize_animal(animal):
+    """Convert a single animal dictionary into a formatted HTML string."""
     name = animal.get("name")
-
-    # Get the diet from the characteristics
     diet = animal.get("characteristics", {}).get("diet")
-
-    # Get the first location (if available)
     locations = animal.get("locations")
     location = locations[0] if locations else None
-
-    # Get the type from the characteristics
     animal_type = animal.get("characteristics", {}).get("type")
 
-    # Start a new list item with the correct class
-    output += '<li class="cards__item">\n'
+    html = '<li class="cards__item">\n'
 
-    # Add the card title (name) if it exists
     if name:
-        output += f'  <div class="card__title">{name}</div>\n'
+        html += f'  <div class="card__title">{name}</div>\n'
 
-    # Add the card text block
-    output += '  <p class="card__text">\n'
+    html += '  <p class="card__text">\n'
     if diet:
-        output += f'    <strong>Diet:</strong> {diet}<br/>\n'
+        html += f'    <strong>Diet:</strong> {diet}<br/>\n'
     if location:
-        output += f'    <strong>Location:</strong> {location}<br/>\n'
+        html += f'    <strong>Location:</strong> {location}<br/>\n'
     if animal_type:
-        output += f'    <strong>Type:</strong> {animal_type}<br/>\n'
-    output += '  </p>\n'
+        html += f'    <strong>Type:</strong> {animal_type}<br/>\n'
+    html += '  </p>\n'
+    html += '</li>\n\n'
 
-    # Close the list item
-    output += '</li>\n\n'
+    return html
 
-# Step 4: Read the HTML template file
-with open("animals_template.html", "r", encoding="utf-8") as file:
-    template = file.read()
 
-# Step 5: Replace the placeholder with the generated HTML content
-new_html = template.replace("__REPLACE_ANIMALS_INFO__", output)
+def build_html(animal_list):
+    """Generate the full HTML string for all animals."""
+    output = ""
+    for animal in animal_list:
+        output += serialize_animal(animal)
+    return output
 
-# Step 6: Write the final HTML to a new file
-with open("animals.html", "w", encoding="utf-8") as file:
-    file.write(new_html)
+
+def insert_into_template(template_path, output_html, output_file):
+    """Replace placeholder in HTML template and write final HTML to file."""
+    with open(template_path, "r", encoding="utf-8") as file:
+        template = file.read()
+
+    final_html = template.replace("__REPLACE_ANIMALS_INFO__", output_html)
+
+    with open(output_file, "w", encoding="utf-8") as file:
+        file.write(final_html)
+
+
+def main():
+    animals = load_animals("animals_data.json")
+    html_output = build_html(animals)
+    insert_into_template("animals_template.html", html_output, "animals.html")
+
+
+if __name__ == "__main__":
+    main()
