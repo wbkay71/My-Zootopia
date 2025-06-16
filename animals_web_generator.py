@@ -1,40 +1,46 @@
 import json
-from tkinter.font import names
 
-
-def load_data(file_path):
-  """ Loads a JSON file """
-  with open(file_path, "r") as handle:
-    return json.load(handle)
-
-animals_data = load_data('animals_data.json')
-
-import json
-
-# Open and read the JSON file
+# Step 1: Load the animal data from the JSON file
 with open("animals_data.json", "r") as file:
     animals = json.load(file)
 
-# Loop through each animal
+# Step 2: Create an empty string to collect HTML content
+output = ""
+
+# Step 3: Loop through each animal in the data list
 for animal in animals:
-    print()
-
-    # Print the name if it exists
+    # Get the name of the animal (if it exists)
     name = animal.get("name")
-    if name:
-        print(f"Name: {name}")
 
-    # Print the diet if it exists in 'characteristics'
+    # Get the diet from the characteristics (if it exists)
     diet = animal.get("characteristics", {}).get("diet")
-    if diet:
-        print(f"Diet: {diet}")
 
-    # Print the first location if the list exists and is not empty
+    # Get the first location from the list (if it exists)
     locations = animal.get("locations")
-    if locations and len(locations) > 0:
-        print(f"Location: {locations[0]}")
+    location = locations[0] if locations else None
 
-    # Print the type if it exists in 'characteristics'
+    # Get the type from the characteristics (if it exists)
     animal_type = animal.get("characteristics", {}).get("type")
+
+    # Step 4: Add information to the HTML string (only if data exists)
+    output += "<p>\n"
+    if name:
+        output += f"<strong>Name:</strong> {name}<br>\n"
+    if diet:
+        output += f"<strong>Diet:</strong> {diet}<br>\n"
+    if location:
+        output += f"<strong>Location:</strong> {location}<br>\n"
     if animal_type:
-        print(f"Type: {animal_type}")
+        output += f"<strong>Type:</strong> {animal_type}<br>\n"
+    output += "</p>\n\n"
+
+# Step 5: Read the HTML template from file
+with open("animals_template.html", "r") as file:
+    template = file.read()
+
+# Step 6: Replace the placeholder with the actual HTML output
+new_html = template.replace("__REPLACE_ANIMALS_INFO__", output)
+
+# Step 7: Save the final HTML to a new file
+with open("animals.html", "w") as file:
+    file.write(new_html)
