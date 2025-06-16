@@ -25,18 +25,22 @@ for animal in animals:
     # Start a new list item with the correct class
     output += '<li class="cards__item">\n'
 
-    # Add animal details (only if the data exists)
+    # Add the card title (name) if it exists
     if name:
-        output += f"Name: {name}<br/>\n"
+        output += f'  <div class="card__title">{name}</div>\n'
+
+    # Add the card text block
+    output += '  <p class="card__text">\n'
     if diet:
-        output += f"Diet: {diet}<br/>\n"
+        output += f'    <strong>Diet:</strong> {diet}<br/>\n'
     if location:
-        output += f"Location: {location}<br/>\n"
+        output += f'    <strong>Location:</strong> {location}<br/>\n'
     if animal_type:
-        output += f"Type: {animal_type}<br/>\n"
+        output += f'    <strong>Type:</strong> {animal_type}<br/>\n'
+    output += '  </p>\n'
 
     # Close the list item
-    output += "</li>\n"
+    output += '</li>\n\n'
 
 # Step 4: Read the HTML template file
 with open("animals_template.html", "r", encoding="utf-8") as file:
